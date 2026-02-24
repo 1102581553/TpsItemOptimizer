@@ -6,6 +6,7 @@
 #include <ll/api/coro/CoroTask.h>
 #include <ll/api/thread/ServerThreadExecutor.h>
 #include <mc/world/actor/Actor.h>
+#include <mc/world/actor/ActorCategory.h>
 #include <mc/world/level/Level.h>
 #include <mc/world/level/BlockSource.h>
 #include <mc/world/level/Tick.h>
@@ -143,18 +144,18 @@ bool Optimizer::disable() {
 
 } // namespace tps_item_optimizer
 
-// ── Actor::$tick Hook（掉落物过滤）────────────────────────
+// ── Actor::tick Hook（掉落物过滤）────────────────────────
 LL_AUTO_TYPE_INSTANCE_HOOK(
     ItemActorTickHook,
     ll::memory::HookPriority::Normal,
     Actor,
-    &Actor::$tick,
+    &Actor::tick,
     bool,
     BlockSource& region
 ) {
     using namespace tps_item_optimizer;
 
-    if (!config.enabled || !this->isType(ActorType::Item)) {
+    if (!config.enabled || !this->hasCategory(ActorCategory::Item)) {
         return origin(region);
     }
 
